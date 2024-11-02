@@ -5,10 +5,17 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import hpp from "hpp";
+import body_parser from "body-parser";
+import dotenv from "dotenv";
+import jsonwebtoken from "jsonwebtoken";
+import multer from "multer";
+import nodemailer from "nodemailer";
+import xss_clean from "xss-clean";
 import * as path from "path";
+import fileUpload from "express-fileupload";
+
 import router from "./routes/api.js";
 import {MONGODB_CONNECTION,PORT,Max_JSON_SIZE,URL_ENCODER,WEB_CACHE,REQUEST_LIMIT_TIME,REQUEST_LIMIT_NUMBER} from "./app/config/config.js";
-import fileUpload from "express-fileupload";
 
 
 const app = express();
@@ -32,9 +39,11 @@ app.use(limit);
 app.set('etag',WEB_CACHE);
 
 //MongoDB Connection
-/*
-    You Need to connect mongoDB Here
-*/
+mongoose.connect(MONGODB_CONNECTION,{autoIndex:true}).then(()=>{
+    console.log("Connected to MongoDB");
+}).catch(err=>{
+    console.log("Error connecting to MongoDB");
+})
 
 //Set API Routes
 app.use("/api",router);
